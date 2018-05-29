@@ -21,11 +21,21 @@ const instructions = Platform.select({
 
 type Props = {};
 export default class App extends Component<Props> {
+
+  state = {
+    message: 'Reaaaaaaaaaaaaaact Native!',
+    count: 0,
+  }
+
   render() {
     return (
       <View style={styles.container}>
-        <Text style={styles.welcome}>
-          Welcome to React Native!
+        <HelloWorld message={ this.state.message } count={ this.state.count }/>
+        <Text
+          style={styles.welcome}
+          onPress={() => this.setState({ message: 'clicked', count: this.state.count + 1 })}
+        >
+          { this.state.message }
         </Text>
         <Text style={styles.instructions}>
           To get started, edit App.js
@@ -33,6 +43,17 @@ export default class App extends Component<Props> {
         <Text style={styles.instructions}>
           {instructions}
         </Text>
+      </View>
+    );
+  }
+}
+
+class HelloWorld extends Component {
+  render() {
+    return (
+      <View>
+        <Text>Hello World { this.props.message }</Text>
+        <Text>click count: { this.props.count }</Text>
       </View>
     );
   }
