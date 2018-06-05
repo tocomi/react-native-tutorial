@@ -30,30 +30,37 @@ export default class App extends Component<Props> {
   render() {
     return (
       <View style={styles.container}>
-        <HelloWorld message={ this.state.message } count={ this.state.count }/>
-        <Text
-          style={styles.welcome}
-          onPress={() => this.setState({ message: 'clicked', count: this.state.count + 1 })}
-        >
-          { this.state.message }
-        </Text>
-        <Text style={styles.instructions}>
-          To get started, edit App.js
-        </Text>
-        <Text style={styles.instructions}>
-          {instructions}
-        </Text>
+        <View style={styles.box1}>
+          <HelloWorld message={this.state.message} count={this.state.count}/>
+        </View>
+        <View style={styles.box2}>
+          <Text
+            style={styles.welcome}
+            onPress={() => this.setState({ message: 'clicked', count: this.state.count + 1 })}
+          >
+            {this.state.message}
+          </Text>
+        </View>
+        <View style={styles.box3}>
+          <Text style={styles.instructions}>
+            To get started, edit App.js
+          </Text>
+          <Text style={styles.instructions}>
+            {instructions}
+          </Text>
+        </View>
       </View>
     );
   }
+
 }
 
 class HelloWorld extends Component {
   render() {
     return (
       <View>
-        <Text>Hello World { this.props.message }</Text>
-        <Text>click count: { this.props.count }</Text>
+        <Text>Hello World {this.props.message}</Text>
+        <Text>click count: {this.props.count}</Text>
       </View>
     );
   }
@@ -62,9 +69,20 @@ class HelloWorld extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
     backgroundColor: '#F5FCFF',
+  },
+  box1: {
+    marginTop: 30,
+    height: 100,
+    backgroundColor: '#EEF',
+  },
+  box2: {
+    flex: 1,
+    backgroundColor: '#CCC',
+  },
+  box3: {
+    height: 100,
+    backgroundColor: '#BBB',
   },
   welcome: {
     fontSize: 20,
