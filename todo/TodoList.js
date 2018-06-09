@@ -12,7 +12,7 @@ export default (props) => (
     {
       props.todos.map((todo, index) => (
         <View key={index} style={styles.todoContainer}>
-          <Text>- {todo}</Text>
+          <Text style={styles.todoText}>{todo}</Text>
           <TouchableOpacity onPress={() => props.onPressDelete(index)} style={styles.deleteButton}>
             <Text style={styles.deleteButtonText}>Done</Text>
           </TouchableOpacity>
@@ -31,10 +31,17 @@ const styles = StyleSheet.create({
     marginTop: 5,
     borderRadius: 5,
   },
+  todoText: {
+    fontSize: 18,
+  },
   deleteButton: {
     backgroundColor: '#D55',
+    borderRadius: 5,
+    padding: 5,
   },
   deleteButtonText: {
     color: '#FFF',
+    fontSize: 13,
+    fontWeight: 'bold',
   },
 });
