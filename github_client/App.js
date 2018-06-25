@@ -9,7 +9,9 @@ import {
   Platform,
   StyleSheet,
   Text,
-  View
+  View,
+  TouchableOpacity,
+  TextInput,
 } from 'react-native';
 
 const instructions = Platform.select({
@@ -19,20 +21,43 @@ const instructions = Platform.select({
     'Shake or press menu button for dev menu',
 });
 
-type Props = {};
 export default class App extends Component<Props> {
+
+  state = {
+    query: '',
+  }
+
+  onPressFetch() {
+    if (this.state.query === '') {
+      alert('Please input query')
+      return
+    }
+    let url = "https://api.github.com/search/repositories?q=" + this.state.query
+    return fetch(url)
+      .then((response) => response.json())
+      .then((responseJson) => {
+        alert(responseJson.total_count);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }
+
+  onChangeQuery(query) {
+    this.setState({ query })
+  }
+
   render() {
     return (
       <View style={styles.container}>
-        <Text style={styles.welcome}>
-          Welcome to React Native!
-        </Text>
-        <Text style={styles.instructions}>
-          To get started, edit App.js
-        </Text>
-        <Text style={styles.instructions}>
-          {instructions}
-        </Text>
+        <TextInput
+          style={styles.queryInput}
+          value={this.state.query}
+          onChangeText={query => this.onChangeQuery(query)}
+        />
+        <TouchableOpacity style={styles.fetchButton} onPress={() => this.onPressFetch()}>
+          <Text style={styles.fetchButtonText}>Fetch</Text>
+        </TouchableOpacity>
       </View>
     );
   }
@@ -45,14 +70,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#F5FCFF',
   },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
+  queryInput: {
+    height: 40,
+    width: '90%',
+    padding: 10,
+    borderRadius: 5,
+    backgroundColor: '#EEE',
   },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
+  fetchButton: {
+    backgroundColor: '#55A',
+    padding: 10,
+    borderRadius: 5,
+    marginTop: 10,
+  },
+  fetchButtonText: {
+    color: '#FFF',
   },
 });
