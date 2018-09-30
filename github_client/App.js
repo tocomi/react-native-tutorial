@@ -12,31 +12,40 @@ import {
   View,
   TouchableOpacity,
   TextInput,
+  FlatList,
 } from 'react-native';
-
-const instructions = Platform.select({
-  ios: 'Press Cmd+R to reload,\n' +
-    'Cmd+D or shake for dev menu',
-  android: 'Double tap R on your keyboard to reload,\n' +
-    'Shake or press menu button for dev menu',
-});
 
 export default class App extends Component<Props> {
 
   state = {
     query: '',
+    items: [],
+    refreshing: false,
   }
+  page = 0;
 
-  onPressFetch() {
+  fetchRepositories(refreshing = false, isPush = false) {
     if (this.state.query === '') {
-      alert('Please input query')
-      return
+      alert('Please input query');
+      return;
     }
-    let url = "https://api.github.com/search/repositories?q=" + this.state.query
+    const newPage = refreshing || isPush ? 1 : this.page + 1;
+    this.setState({ refreshing })
+    let url = `https://api.github.com/search/repositories?q=${this.state.query}&page=${newPage}`
     return fetch(url)
       .then((response) => response.json())
-      .then((responseJson) => {
-        alert(responseJson.total_count);
+      .then(({ items }) => {
+        if (items === undefined) {
+          return;
+        }
+        this.page = newPage;
+        if (isPush) {
+          this.setState({ items })
+        } else if (refreshing) {
+          this.setState({ items, refreshing: false });
+        } else {
+          this.setState({ items: [...this.state.items, ...items], refreshing: false });
+        }
       })
       .catch((error) => {
         console.error(error);
@@ -55,9 +64,24 @@ export default class App extends Component<Props> {
           value={this.state.query}
           onChangeText={query => this.onChangeQuery(query)}
         />
-        <TouchableOpacity style={styles.fetchButton} onPress={() => this.onPressFetch()}>
+        <TouchableOpacity style={styles.fetchButton} onPress={() => this.fetchRepositories(false, true)}>
           <Text style={styles.fetchButtonText}>Fetch</Text>
         </TouchableOpacity>
+        <View style={styles.resultView}>
+          <FlatList
+            data={this.state.items}
+            renderItem={({ item }) => 
+              <View>
+                <Text>{item.id}: {item.name} @{item.owner.login}</Text>
+              </View>
+            }
+            keyExtractor={(item) => item.id}
+            onEndReached={() => this.fetchRepositories()}
+            onEndReachedThreshold={0.5}
+            onRefresh={() => this.fetchRepositories(true)}
+            refreshing={this.state.refreshing}
+          />
+        </View>
       </View>
     );
   }
@@ -85,5 +109,10 @@ const styles = StyleSheet.create({
   },
   fetchButtonText: {
     color: '#FFF',
+  },
+  resultView: {
+    height: 400,
+    width: '80%',
+    marginTop: 10,
   },
 });
